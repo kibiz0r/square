@@ -42,16 +42,15 @@ int main() {
 
     //Defining and sizing the square
     sf::RectangleShape square(sf::Vector2f(100, 100));
-	square.setFillColor(sf::Color(47, 79, 79));
-
-	sf::RectangleShape projectile(sf::Vector2f(10, 10));
-	projectile.setFillColor(sf::Color(255, 0, 0));
+    square.setFillColor(sf::Color(47, 79, 79));
+    sf::RectangleShape projectile(sf::Vector2f(10, 10));
+    projectile.setFillColor(sf::Color(255, 0, 0));
 
     //Setting starting position
     square.setPosition(0, 0);
-	projectile.setPosition(0, 0);
-
-	sf::Clock clock;
+    projectile.setPosition(0, 0);
+    
+    sf::Clock clock;
 
     bool fire = false;
 
@@ -61,9 +60,8 @@ int main() {
         //Clear the window with a color
         window.clear(sf::Color::White);
 
-        //Draw the rest of the fucking owl
+        //Draw the rest of the owl
         window.draw(square);
-		//window.draw(projectile);
 
         //Check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
@@ -114,7 +112,7 @@ int main() {
 
         //Getting all objects position position
         sf::Vector2f position = square.getPosition();
-		sf::Vector2f position2 = projectile.getPosition();
+        sf::Vector2f position2 = projectile.getPosition();
 
         //Restricting object movement to the window
         position.x = std::max(position.x, windowBounds.left);
@@ -122,14 +120,14 @@ int main() {
         position.y = std::max(position.y, windowBounds.top);
         position.y = std::min(position.y, windowBounds.top + windowBounds.height - square.getSize().y);
         square.setPosition(position);
-
-		position2.x = std::max(position2.x, windowBounds.left);
-		position2.x = std::min(position2.x, windowBounds.left + windowBounds.width - projectile.getSize().x);
-		position2.y = std::max(position2.y, windowBounds.top);
-		position2.y = std::min(position2.y, windowBounds.top + windowBounds.height - projectile.getSize().y);
-		projectile.setPosition(position2);
-
-		//End the current frame
-		window.display();
+        
+        position2.x = std::max(position2.x, windowBounds.left);
+        position2.x = std::min(position2.x, windowBounds.left + windowBounds.width - projectile.getSize().x);
+        position2.y = std::max(position2.y, windowBounds.top);
+        position2.y = std::min(position2.y, windowBounds.top + windowBounds.height - projectile.getSize().y);
+        projectile.setPosition(position2);
+        
+        //End the current frame
+        window.display();
     }
 }
