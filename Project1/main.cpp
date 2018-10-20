@@ -12,7 +12,7 @@ To Do:
 
     =============================================================
                              Graveyard
-							 
+
 
 
 
@@ -53,6 +53,8 @@ int main() {
 
 	sf::Clock clock;
 
+    bool fire = false;
+
     //Run the program as long as the window is open
     while (window.isOpen()) {
 
@@ -61,7 +63,7 @@ int main() {
 
         //Draw the rest of the fucking owl
         window.draw(square);
-		window.draw(projectile);
+		//window.draw(projectile);
 
         //Check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
@@ -102,15 +104,19 @@ int main() {
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             //Space bar is pressed: fire projectile
-            projectile.move(0, projectilespeed);
-	
+            fire = true;
+            if (fire = true)
+            {
+                window.draw(projectile);
+                projectile.setPosition(square.getPosition());
+            }
         }
 
         //Getting all objects position position
         sf::Vector2f position = square.getPosition();
 		sf::Vector2f position2 = projectile.getPosition();
 
-        //Restricting square movement to the window
+        //Restricting object movement to the window
         position.x = std::max(position.x, windowBounds.left);
         position.x = std::min(position.x, windowBounds.left + windowBounds.width - square.getSize().x);
         position.y = std::max(position.y, windowBounds.top);
