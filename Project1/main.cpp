@@ -6,9 +6,10 @@ SFML Tutorial Website: (https://www.sfml-dev.org/tutorials/2.5/)
 FillColor uses Decimal Code R,G,B Color Reference: (https://www.rapidtables.com/web/color/RGB_Color.html)
 
 
-To Do: 
-    -user prompted but independent projectile movement
-    -restrict projectile movement to the window
+
+To Do:
+-Replace setPosition to setOrigin when drawing the projectile
+-Get the projectile to move
 
     =============================================================
                              Graveyard
