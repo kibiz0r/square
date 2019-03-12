@@ -6,16 +6,21 @@ SFML Tutorial Website: (https://www.sfml-dev.org/tutorials/2.5/)
 FillColor uses Decimal Code R,G,B Color Reference: (https://www.rapidtables.com/web/color/RGB_Color.html)
 
 
-
-To Do:
--Replace setPosition to setOrigin when drawing the projectile
--Get the projectile to move
+        @To Do:
+        gut code from ground up, replace code with known working methods
+        replace "Mouse::isButtonPressed(Mouse::Left)" with spacebar [maybe use both..?]
+        
+        erase projectiles as they leave the window and restrict player movement to the window
+        draw enemies
 
     =============================================================
                              Graveyard
 
 
-
+        You only need one flag: is there a projectile?
+        When the space bar is pressed and the flag is false, set the projectile's position to the square's position, and set the flag to true
+        When the flag is true, move the projectile and draw it
+        When the projectile is out of bounds, set the flag to false.
 
 
     =============================================================
@@ -28,44 +33,53 @@ To Do:
     ...(sf::Color(0,0,0);
 */
 
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
-
+#include <vector>
+#include <cstdlib>
+using namespace std;
+using namespace sf;
 
 int main() {
 
     //Create the window
     sf::RenderWindow window(sf::VideoMode(1000, 800), "Zone Of The Square");
 
+    //Frame limit
+    window.setFramerateLimit(60);
+
     //Declaring window bounds and acquiring window size
     sf::FloatRect windowBounds(sf::Vector2f(0.f, 0.f), window.getDefaultView().getSize());
 
-    //Defining and sizing the square and projectile
-    sf::RectangleShape square(sf::Vector2f(100, 100));
-    square.setFillColor(sf::Color(47, 79, 79));
+    //Defining and sizing the player and projectile
+    CircleShape player;
+    player.setFillColor(Color::Blue);
+    player.setRadius(20);
+    Vector2f playerCenter;
 
-    sf::RectangleShape projectile(sf::Vector2f(10, 10));
-    projectile.setFillColor(sf::Color(255, 0, 0));
+    CircleShape projectile;
+    projectile.setFillColor(Color::Yellow);
+    projectile.setRadius(5);
+
+    //Definig and sizing the enemies
+    CircleShape enemy;
+    enemy.setFillColor(Color::Red);
+    enemy.setRadius(25);
 
     //Setting starting position
-    square.setPosition(0, 0);
-    
-    sf::Clock clock;
+    player.setPosition(window.getSize().x / 2 - player.getRadius(), window.getSize().y - player.getRadius() * 2 - 10.f);
 
     //Variables
-    int speed = 100;
-    float projectilespeed = 0.80;
-    bool fire = false;
+    int shooting = 0;
+
+    vector <CircleShape> projectiles;
+    projectiles.push_back(CircleShape(projectile));
+
+    vector <CircleShape> enemies;
 
     //Run the program as long as the window is open
     while (window.isOpen()) {
-
-        //Clear the window with a color
-        window.clear(sf::Color::White);
-
-        //Draw the rest of the fucking owl
-        window.draw(square);
 
         //Check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
@@ -80,56 +94,68 @@ int main() {
             }
         }
 
-        sf::Time elapsedTime = clock.restart();
-        float tempSpeed = elapsedTime.asSeconds() * speed;
+        // defining Player Center
+        playerCenter = Vector2f(player.getPosition().x + player.getRadius(), player.getPosition().y + player.getRadius());
+
+        if (shooting < 9) {
+            shooting++;
+        }
+
+        //Input to fire a projectile
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && shooting >= 9) {
+            projectile.setPosition(playerCenter);
+            projectiles.push_back(CircleShape(projectile));
+
+            shooting = 0;
+        }
 
         //Square controls (Left-10,0) (Right10,0) (Up0,-10) (Down0,10)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            //Left arrow key is pressed: move the player LEFT
+            player.move(-10.f, 0);
+        }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            //Left arrow key is pressed: move the rectangle
-            square.move(-tempSpeed, 0);
+            //Left arrow key is pressed: move the player LEFT
+            player.move(-10.f, 0);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            //Right arrow key is pressed: move the rectangle
-            square.move (tempSpeed, 0);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            //Up arrow key is pressed: move the rectangle
-            square.move(0, -tempSpeed);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            //Down arrow key is pressed: move the rectangle
-            square.move(0, tempSpeed);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            //Space bar is pressed: fire
-
-            window.draw(projectile);
-
-            //if-statement to fire projectile
-            if (fire = true)
-            {
-                projectile.setPosition(square.getPosition());
-            }
-        }
-
-        //Getting all objects position position
-        sf::Vector2f position = square.getPosition();
-        sf::Vector2f position2 = projectile.getPosition();
-
-        //Restricting object movement to the window
-        position.x = std::max(position.x, windowBounds.left);
-        position.x = std::min(position.x, windowBounds.left + windowBounds.width - square.getSize().x);
-        position.y = std::max(position.y, windowBounds.top);
-        position.y = std::min(position.y, windowBounds.top + windowBounds.height - square.getSize().y);
-        square.setPosition(position);
-
-        position2.x = std::max(position2.x, windowBounds.left);
-        position2.x = std::min(position2.x, windowBounds.left + windowBounds.width - projectile.getSize().x);
-        position2.y = std::max(position2.y, windowBounds.top);
-        position2.y = std::min(position2.y, windowBounds.top + windowBounds.height - projectile.getSize().y);
-        projectile.setPosition(position2);
         
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            //Right arrow key is pressed: move the player RIGHT
+            player.move(10.f, 0);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            //Right arrow key is pressed: move the player RIGHT
+            player.move(10.f, 0);
+        }
+
+        /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            //Up arrow key is pressed: move the rectangle
+            player.move(0, -10.f);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            //Down arrow key is pressed: move the rectangle
+            player.move(0, 10.f);
+        }*/
+
+        for (size_t i = 0; i < projectiles.size(); i++)
+        {
+            projectiles[i].move(0.f, -10.f);
+        }
+
         //End the current frame
+
+        window.clear();
+        window.draw(player);
+
+        for (size_t i = 0; i < projectiles.size(); i++){
+
+            window.draw(projectiles[i]);
+        }
+
         window.display();
     }
+
+    return 0;
 }
