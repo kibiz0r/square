@@ -1,2 +1,5 @@
 /bin
+/obj
+/sfml
+/sfml.zip
 .vscode
